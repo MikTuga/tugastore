@@ -116,7 +116,7 @@ scripts/install-smoke.sh          # adb install/start/relaunch smoke test
 
 **Зачем общая подпись:** TugaSettings ContentProvider читается/пишется только из приложений с такой же подписью (`com.miktuga.permission.READ_SETTINGS` / `WRITE_SETTINGS` с `protectionLevel="signature"` + ручная проверка `checkSignatures()` в insert/update/delete).
 
-**SHA-1 сертификата** (постоянный для всех release-сборок): `06ebb7ac36717017003232f471908c97d3407c1f`.
+**SHA-1 сертификата** (постоянный для всех release-сборок): `e2ded6293acc1541ffd8962b3a28a69d3835bbd0`.
 
 Lint-чек `ExpiredTargetSdkVersion` отключён (намеренно targetSdk=28). Также отключён `UseAppTint` — workspace lint цеплялся за pre-existing `android:tint` в layouts.
 

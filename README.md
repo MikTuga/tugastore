@@ -63,7 +63,7 @@ cd <workspace>
 
 Общий keystore для всех 6 апок: `_signing/tuga-release.jks` + `_signing/keystore.properties` (оба gitignored, в workspace root). RSA 2048, alias `tugastore`. Все 6 апок собираются с v1+v2+v3 schemes одновременно.
 
-**SHA-1 release-сертификата:** `06ebb7ac36717017003232f471908c97d3407c1f` (одинаков для всех 6 апок — required для signature-protected ContentProvider TugaSettings).
+**SHA-1 release-сертификата:** `e2ded6293acc1541ffd8962b3a28a69d3835bbd0` (одинаков для всех 6 апок — required для signature-protected ContentProvider TugaSettings).
 
 ### Через scripts/
 

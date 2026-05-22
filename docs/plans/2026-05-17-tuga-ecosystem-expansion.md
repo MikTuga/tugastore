@@ -17,7 +17,7 @@
 
 - ✅ Workspace-level Gradle multi-module (один `./gradlew build` на 6 апок)
 - ✅ Все пакеты `com.example.*` → `com.miktuga.*`
-- ✅ Keystore rotated (новый password), v1+v2+v3 signing, single SHA-1 `06ebb7ac36717017003232f471908c97d3407c1f`
+- ✅ Keystore rotated (новый password), v1+v2+v3 signing, single SHA-1 `e2ded6293acc1541ffd8962b3a28a69d3835bbd0`
 - ✅ Shared design library `tuga-design` (colors/themes/drawables/TugaSetting schema/FeedbackSubmitter)
 - ✅ TugaSettings (6-я утилита), inline UI с segmented buttons
 - ✅ Feedback flow: HTTPS POST → fallback в TugaStore-private filesDir/feedback/ → auto-retry на startup с WiFi
@@ -273,7 +273,7 @@ Manifest API агрегирует ссылки на свежие release assets 
 2. SHA-256 verify против значения из подписанного manifest
 3. Extract signing cert через `getPackageArchiveInfo` (с проверкой что pi != null — если null, abort и log)
 4. Cert fingerprint check:
-   - **Central apps** (TugaStore, TugaSettings): pinned expected SHA-1 `06ebb7ac...`. Failure → abort.
+   - **Central apps** (TugaStore, TugaSettings): pinned expected SHA-1 `e2ded629...`. Failure → abort.
    - **Community apps** (OBD/GPS/Media/Sync): сравнить с уже установленной версией. Если совпадает (continuity) → ok. Если первая установка → trust the manifest's published cert SHA-1 (хранится в manifest entry).
 5. Compare versionCode (новый > установленный)
 6. Rename `.part` → final
