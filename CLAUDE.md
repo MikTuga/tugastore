@@ -4,7 +4,7 @@
 
 Android-приложение для автомобильной головы Geely Tugella (Android 5.1). Собственный app store + диагностика устройства + экосистема из 5 утилит (OBD, GPS, Media, Sync, Settings). Без Google Play, но **есть WiFi** на голове — пользователи подключают её к домашней сети.
 
-**Целевая аудитория:** community владельцев Geely Tugella и других авто на прошивке Geely Garage (рутованный Android 5.1). Под старый Android новый софт почти не выходит — TugaStore + утилиты закрывают эту нишу. Первая установка через USB-флешку, дальше обновления **по воздуху через miktuga.ru** (планируется в Phase 2/3 плана v3).
+**Целевая аудитория:** community владельцев Geely Tugella и других авто на прошивке GMCustoms (рутованный Android 5.1). Под старый Android новый софт почти не выходит — TugaStore + утилиты закрывают эту нишу. Первая установка через USB-флешку, дальше обновления **по воздуху через miktuga.ru** (планируется в Phase 2/3 плана v3).
 
 ## Tech Stack
 
@@ -196,7 +196,7 @@ adb exec-out screencap -p > screen.png
 sips -r 270 screen.png --out screen_rotated.png  # framebuffer всегда в portrait
 ```
 
-## Устройство (голова Tugella + Geely Garage прошивка)
+## Устройство (голова Tugella + GMCustoms прошивка)
 
 - Android 5.1 (рутованный)
 - USB-флешка монтируется в `/storage/usbotg/usbotg-otg1` (FAT32, ExFAT не читается)
@@ -205,7 +205,7 @@ sips -r 270 screen.png --out screen_rotated.png  # framebuffer всегда в p
 - **WiFi работает** — пользователи подключают голову к домашней сети
 - HTTPS, POST/GET к публичным API работают (есть TLS support)
 - Email-клиенты обычно НЕ установлены — `mailto:` интенты не работают (поэтому **Feedback использует HTTPS POST → fallback на TugaStore-private `filesDir/feedback/`**)
-- Прошивка от Geely Garage популярна в community владельцев Tugella и других моделей Geely
+- Прошивка от GMCustoms популярна в community владельцев Tugella и других моделей Geely
 
 ## Правила разработки
 
