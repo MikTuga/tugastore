@@ -1,0 +1,50 @@
+[
+  {
+    "id": "device-diagnostics",
+    "title": "Device Diagnostics",
+    "description": "Сбор системной информации о магнитоле и экспорт отчёта.",
+    "packageName": "com.miktuga.store",
+    "version": "0.2.1",
+    "apkPath": ""
+  },
+  {
+    "id": "tuga-settings",
+    "title": "Tuga Settings",
+    "description": "Общие настройки экосистемы Tuga: единицы, пути, обновления. Установите ПЕРВОЙ — остальные приложения видят её permissions только если она уже стоит.",
+    "packageName": "com.miktuga.settings",
+    "version": "0.1.0",
+    "apkPath": "/storage/usbotg/usbotg-otg1/apps/tugasettings.apk"
+  },
+  {
+    "id": "tuga-obd",
+    "title": "Tuga OBD",
+    "description": "Модуль для OBD-метрик, ошибок и телеметрии.",
+    "packageName": "com.miktuga.obd",
+    "version": "0.1.0",
+    "apkPath": "/storage/usbotg/usbotg-otg1/apps/tugaobd.apk"
+  },
+  {
+    "id": "tuga-gps",
+    "title": "Tuga GPS",
+    "description": "GPS-координаты, скорость, компас и трек.",
+    "packageName": "com.miktuga.gps",
+    "version": "0.1.0",
+    "apkPath": "/storage/usbotg/usbotg-otg1/apps/tugagps.apk"
+  },
+  {
+    "id": "tuga-media",
+    "title": "Tuga Media",
+    "description": "Быстрый запуск музыки и видео с USB.",
+    "packageName": "com.miktuga.media",
+    "version": "0.1.0",
+    "apkPath": "/storage/usbotg/usbotg-otg1/apps/tugamedia.apk"
+  },
+  {
+    "id": "tuga-sync",
+    "title": "Tuga Sync",
+    "description": "Синхронизация файлов между USB и устройством.",
+    "packageName": "com.miktuga.sync",
+    "version": "0.1.0",
+    "apkPath": "/storage/usbotg/usbotg-otg1/apps/tugasync.apk"
+  }
+]

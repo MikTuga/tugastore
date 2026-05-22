@@ -1,0 +1,22 @@
+# Gradle / build
+.gradle/
+build/
+app/build/
+local.properties
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+.DS_Store
+
+# Signing — НЕ коммитить пароли и keystore
+keystore.properties
+*.jks
+*.keystore
+
+# Captures
+captures/
+
+# APK output cache
+*.apk
+!app/build/outputs/apk/**/*.apk
