@@ -8,25 +8,37 @@
 
 | Phase | Статус | Дата |
 |---|---|---|
-| **Phase 1** — Подготовка (workspace + бренд + signing + cross-app settings + feedback) | ✅ **DONE** | 2026-05-17 |
-| **Phase 2** — miktuga.ru + signed manifest + feedback API | ⏳ В очереди | TBD |
+| **Phase 1A** — Workspace refactor (бренд + signing + cross-app settings + feedback) | ✅ **DONE** | 2026-05-17 |
+| **Phase 1B** — Multi-repo split (7 GitHub repos + JitPack lib) | ✅ **DONE** | 2026-05-23 |
+| **Phase 2** — miktuga.ru + signed manifest API + feedback backend | ⏳ В очереди | TBD |
 | **Phase 3** — OTA-клиент в TugaStore | ⏳ В очереди | TBD |
 
-### Phase 1 итоги (выполнено через /ralphex за 2h 37m, 19 коммитов на ветке `tuga-ecosystem-expansion`)
+### Phase 1A итоги (через /ralphex за 2h 37m, монорепо `tuga-ecosystem` на ветке `tuga-ecosystem-expansion`)
 
 - ✅ Workspace-level Gradle multi-module (один `./gradlew build` на 6 апок)
 - ✅ Все пакеты `com.example.*` → `com.miktuga.*`
 - ✅ Keystore rotated (новый password), v1+v2+v3 signing, single SHA-1 `06ebb7ac36717017003232f471908c97d3407c1f`
 - ✅ Shared design library `tuga-design` (colors/themes/drawables/TugaSetting schema/FeedbackSubmitter)
-- ✅ TugaSettings (6-я утилита) с signature-protected ContentProvider, inline UI с segmented buttons
+- ✅ TugaSettings (6-я утилита), inline UI с segmented buttons
 - ✅ Feedback flow: HTTPS POST → fallback в TugaStore-private filesDir/feedback/ → auto-retry на startup с WiFi
 - ✅ `PackageInstaller.Session` вместо `Intent.ACTION_VIEW`
-- ✅ `apps.yaml` (single source of truth) + 3 build scripts (build-all, verify-release, install-smoke), bash 3.2 compat
-- ✅ Deployment package обновлён (`TugaStore-Release/`, 30 МБ, 6 APK)
 - ✅ TugaStore bumped to v0.2.1, 5 утилит v0.1.0
 - ✅ 5 раундов code review (Claude + Codex), все findings зафиксены или обоснованы
-- ✅ Полная документация: workspace README, CLAUDE.md, 6 CHANGELOG.md
-- ✅ Outcomes file: `docs/plans/completed/2026-05-17-phase1-tasks.md`
+
+### Phase 1B итоги (multi-repo split за ~3h, 2026-05-23)
+
+После решения "community-maintainable apps + discoverability" монорепо разнесён на 7 публичных GitHub-репо:
+
+- ✅ `MikTuga/tuga-design` — JitPack-published Android library (`com.github.miktuga:tuga-design:0.1.0`)
+- ✅ `MikTuga/tugastore` — main app, v0.2.1, central под MikTuga keystore
+- ✅ `MikTuga/tugasettings` — settings ContentProvider, **permission downgraded** `signature` → `normal` (v0.1.1) чтобы community apps работали без shared keystore
+- ✅ `MikTuga/tugaobd` / `tugagps` / `tugamedia` / `tugasync` — все v0.1.0, community-maintainable
+- ✅ Все 6 consumer apps зависят от tuga-design через JitPack, build standalone success
+- ✅ TugaStore + TugaSettings локальные keystore-копии в их репо (gitignored), общий SHA-1 цертификат
+- ✅ Per-app .gitignore с secret protection
+- ✅ Workspace остаётся для локальной dev convenience (7 папок рядом, push per repo)
+- ✅ Author email во всех commits — GitHub noreply (`285482067+MikTuga@users.noreply.github.com`)
+- ✅ Backup монорепо .git → `/tmp/tuga-workspace-monorepo-git-*.tar.gz`
 
 ## Контекст (важно)
 
@@ -216,8 +228,26 @@ UI:
 
 И отдельный файл `release-manifest.sig` с подписью.
 
-#### 2.4 APK хостинг
-**GitHub Releases** для APK (бесплатно, public URLs). Manifest API возвращает прямые ссылки на release assets.
+#### 2.4 APK хостинг (multi-repo coordination)
+**GitHub Releases per repo** (бесплатно, public URLs). Каждый из 6 app repos имеет свои releases.
+
+```
+github.com/MikTuga/tugastore/releases/download/v0.2.1/tugastore-release.apk
+github.com/MikTuga/tugaobd/releases/download/v0.1.0/tugaobd-release.apk
+github.com/MikTuga/tugagps/releases/download/v0.1.0/tugagps-release.apk
+github.com/MikTuga/tugamedia/releases/download/v0.1.0/tugamedia-release.apk
+github.com/MikTuga/tugasync/releases/download/v0.1.0/tugasync-release.apk
+github.com/MikTuga/tugasettings/releases/download/v0.1.1/tugasettings-release.apk
+```
+
+Manifest API агрегирует ссылки на свежие release assets через GitHub API.
+
+**Release pipeline per app (manual для MVP):**
+1. Bump versionName + versionCode в `app/build.gradle.kts`
+2. Update CHANGELOG.md
+3. Build release APK (только TugaStore + TugaSettings — community repos подписывают своими ключами)
+4. `gh release create vX.Y.Z --notes "..." app/build/outputs/apk/release/*.apk`
+5. Manifest builder (Cloudflare Worker или GitHub Action) подхватит новый release
 
 #### 2.5 Feedback API
 `POST /api/feedback`:
@@ -240,12 +270,16 @@ UI:
 
 #### 3.2 Atomic download + verify + install
 1. Download APK в `tugaobd.apk.part`
-2. SHA-256 verify
+2. SHA-256 verify против значения из подписанного manifest
 3. Extract signing cert через `getPackageArchiveInfo` (с проверкой что pi != null — если null, abort и log)
-4. Compare cert fingerprint с pinned `EXPECTED_CERTS[package]`
+4. Cert fingerprint check:
+   - **Central apps** (TugaStore, TugaSettings): pinned expected SHA-1 `06ebb7ac...`. Failure → abort.
+   - **Community apps** (OBD/GPS/Media/Sync): сравнить с уже установленной версией. Если совпадает (continuity) → ok. Если первая установка → trust the manifest's published cert SHA-1 (хранится в manifest entry).
 5. Compare versionCode (новый > установленный)
 6. Rename `.part` → final
 7. `PackageInstaller.Session.commit()` с callback
+
+**Threat model:** Ed25519-signed manifest = root of trust. SHA-256 + cert fingerprint = defense-in-depth. Multi-maintainer reality: community apps могут иметь разные cert fingerprints (community-published versions), но manifest указывает который ожидать для текущего release.
 
 #### 3.3 Auto-update toggle + offline cache
 - TugaSettings ключ `auto_update_check: bool`
